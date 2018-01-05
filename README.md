@@ -26,3 +26,5 @@ Start your server and login to wordpress.
 Copy the folders from the repository to wp-content/plugins folder and then navigate to plugins section of the Admin Dashboard
 
 You are now ready to go.
+
+Sources used: Develop with WP
