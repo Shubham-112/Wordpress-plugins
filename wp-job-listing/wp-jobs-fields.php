@@ -2,7 +2,7 @@
 function dwwp_add_custom_metabox() {
 	add_meta_box(
 		'dwwp_meta',
-        'Job Listing' ,
+        __('Job Listing') ,
 		'dwwp_meta_callback',
 		'job',
 		'normal',
@@ -127,4 +127,4 @@ function dwwp_meta_save( $post_id ) {
 		update_post_meta( $post_id, 'relocation_assistance', sanitize_text_field( $_POST[ 'relocation_assistance' ] ) );
 	}
 }
-add_action( 'save_post', 'dwwp_meta_save' );
+add_action( 'wp_ajax_save_post', 'dwwp_meta_save' );
