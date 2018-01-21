@@ -14,3 +14,4 @@ if (! defined('ABSPATH')){
 
 require_once (plugin_dir_path(__FILE__).'wp-system.php');
 require_once (plugin_dir_path(__FILE__).'system-info.php');
+require_once (plugin_dir_path(__FILE__).'pagespeed-info.php');
