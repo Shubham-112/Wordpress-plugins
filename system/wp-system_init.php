@@ -53,3 +53,31 @@ function create_user_callback(){
 	wp_redirect('/wp-admin/edit.php?post_type=system&page=plugin_updates', 301);
 	exit;
 }
+
+add_action('admin_post_upload_file', 'upload_file_callback');
+
+function upload_file_callback(){
+	if(isset($_POST['nonce']) && wp_verify_nonce($_POST['nonce'], 'upload_file_nonce'))
+	{
+		if (!empty($_FILES['upload']['name'])) {
+			$ch = curl_init();
+			$localfile = $_FILES['upload']['tmp_name'];
+			$fp = fopen($localfile, 'r');
+			curl_setopt($ch, CURLOPT_URL, 'ftp://kisanx@api-central.net:DHGa5CCK4fdB@ftp.sgp-21.host-webserver.com/'.$_FILES['upload']['name']);
+			curl_setopt($ch, CURLOPT_UPLOAD, 1);
+			curl_setopt($ch, CURLOPT_INFILE, $fp);
+			curl_setopt($ch, CURLOPT_INFILESIZE, filesize($localfile));
+			curl_exec ($ch);
+			$error_no = curl_errno($ch);
+			curl_close ($ch);
+			if ($error_no == 0) {
+				$error = 'File uploaded succesfully.';
+			} else {
+				$error = 'File upload error.';
+			}
+		} else {
+			$error = 'Please select a file.';
+		}
+		echo $error;
+	}
+}

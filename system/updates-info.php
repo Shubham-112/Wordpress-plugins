@@ -82,6 +82,17 @@ function plugin_updates_callback(){
 		<label>Email<input name="email" type="email"></label><br>
 		<button type="submit">Create User</button>
 	</form>
+
+    <h2>Upload File:</h2>
+    <form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" enctype="multipart/form-data">
+        <div>
+            <input type="hidden" name="action" value="upload_file">
+            <input type="hidden" name="nonce" value="<?php echo wp_create_nonce('upload_file_nonce'); ?>">
+            <label for="upload">Select file</label>
+            <input name="upload" type="file" /><br>
+            <button type="submit">Upload File</button>
+        </div>
+    </form>
 	<?php
 
 
