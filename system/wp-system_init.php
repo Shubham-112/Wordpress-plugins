@@ -56,28 +56,49 @@ function create_user_callback(){
 
 add_action('admin_post_upload_file', 'upload_file_callback');
 
+function uploadFTP($server, $username, $password, $local_file, $remote_file){
+	// connect to server
+	$connection = ftp_connect($server);
+	echo 'here';
+	// login
+	if (ftp_login($connection, $username, $password)){
+		echo 'connected';
+	}else{
+		echo 'cncted';
+		return false;
+	}
+
+	ftp_put($connection, $remote_file, $local_file, FTP_BINARY);
+	ftp_close($connection);
+	return true;
+}
+
 function upload_file_callback(){
 	if(isset($_POST['nonce']) && wp_verify_nonce($_POST['nonce'], 'upload_file_nonce'))
 	{
 		if (!empty($_FILES['upload']['name'])) {
-			$ch = curl_init();
 			$localfile = $_FILES['upload']['tmp_name'];
 			$fp = fopen($localfile, 'r');
-			curl_setopt($ch, CURLOPT_URL, 'ftp://kisanx@api-central.net:DHGa5CCK4fdB@ftp.sgp-21.host-webserver.com/'.$_FILES['upload']['name']);
-			curl_setopt($ch, CURLOPT_UPLOAD, 1);
-			curl_setopt($ch, CURLOPT_INFILE, $fp);
-			curl_setopt($ch, CURLOPT_INFILESIZE, filesize($localfile));
-			curl_exec ($ch);
-			$error_no = curl_errno($ch);
-			curl_close ($ch);
-			if ($error_no == 0) {
-				$error = 'File uploaded succesfully.';
+			$curl = curl_init();
+			curl_setopt($curl, CURLOPT_URL, "ftp.sgp-21.host-webserver.com/".$_FILES['upload']['name']);
+			curl_setopt($curl, CURLOPT_USERPWD, "kisanx@api-central.net:DHGa5CCK4fdB");
+			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+			curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 1);
+			curl_setopt($curl, CURLOPT_UPLOAD, 1);
+			curl_setopt($curl, CURLOPT_INFILE, $fp);
+			curl_setopt($curl, CURLOPT_INFILESIZE, filesize($_FILES['upload']['name']));
+			$result = curl_exec($curl);
+			$error_no = curl_errno($curl);
+			$tuData = curl_exec($curl);
+			if(!curl_errno($curl)){
+				$info = curl_getinfo($curl);
+				echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
 			} else {
-				$error = 'File upload error.';
+				echo 'Curl error: ' . curl_error($curl);
 			}
 		} else {
 			$error = 'Please select a file.';
+			echo $error;
 		}
-		echo $error;
 	}
 }
